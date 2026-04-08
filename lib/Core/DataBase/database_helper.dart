@@ -1,6 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:todotasks/Models/Databasemodael.dart';
+import 'package:todotasks/Models/task_model.dart';
 
 class TasksDataBase {
   static Database? _database;
@@ -43,7 +43,6 @@ TaskPriority INTEGER
         Tasktitle: maps[index]["Tasktitle"] as String,
         Description: maps[index]["Description"] as String,
         TaskPriority: maps[index]["TaskPriority"] as int,
-        isCompleted: maps[index]["isCompleted"] as bool,
       );
     });
   }
@@ -53,8 +52,8 @@ TaskPriority INTEGER
     await db.update(
       'Uptodotasks',
       Task.toMap(),
-      where: 'Tasktitle = ?',
-      whereArgs: [Task.Tasktitle],
+      where: 'id = ?',  
+      whereArgs: [Task.id],
     );
   }
 
@@ -62,8 +61,8 @@ TaskPriority INTEGER
     final db = await database;
     await db.delete(
       'Uptodotasks',
-      where: 'Tasktitle = ?',
-      whereArgs: [Task.Tasktitle],
+      where: 'id = ?',
+      whereArgs: [Task.id],
     );
   }
 
