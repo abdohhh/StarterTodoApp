@@ -1,5 +1,4 @@
-class Databasemodael {
-
+class TaskModel {
   final int? id;
   final String Tasktitle;
   final String Description;
@@ -7,15 +6,16 @@ class Databasemodael {
   //  final DateTime TaskAlarm;
   // bool isCompleted;/
 
-  Databasemodael({
+  TaskModel({
     required this.Tasktitle,
     required this.Description,
-    required this.TaskPriority, this.id,
+    required this.TaskPriority,
+    this.id,
     // required this.isCompleted,
   });
 
   Map<String, dynamic> toMap() {
-    return {
+    return {        
       'id': id,
       'Tasktitle': Tasktitle,
       'Description': Description,
@@ -26,29 +26,29 @@ class Databasemodael {
   }
 }
 
-List<Databasemodael> testdata = [
-  Databasemodael(
+List<TaskModel> testdata = [
+  TaskModel(
     id: 1,
     Tasktitle: "Task 1",
     Description: "Description for Task 1",
     TaskPriority: 1,
     // isCompleted: false,
   ),
-  Databasemodael(
+  TaskModel(
     id: 2,
     Tasktitle: "Task 2",
     Description: "Description for Task 2",
     TaskPriority: 2,
     // isCompleted: true,
   ),
-  Databasemodael(
+  TaskModel(
     id: 3,
     Tasktitle: "Task 3",
     Description: "Description for Task 3",
     TaskPriority: 3,
     // isCompleted: false,
   ),
-  Databasemodael(
+  TaskModel(
     id: 4,
     Tasktitle: "Task 4",
     Description: "Description for Task 4",

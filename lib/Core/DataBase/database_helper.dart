@@ -30,16 +30,16 @@ TaskPriority INTEGER
     );
   }
 
-  Future<void> insertTask(Databasemodael Task) async {
+  Future<void> insertTask(TaskModel Task) async {
     final db = await database;
     await db.insert("Uptodotasks", Task.toMap());
   }
 
-  Future<List<Databasemodael>> Tasks() async {
+  Future<List<TaskModel>> Tasks() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('Uptodotasks');
     return List.generate(maps.length, (index) {
-      return Databasemodael(
+      return TaskModel(
         Tasktitle: maps[index]["Tasktitle"] as String,
         Description: maps[index]["Description"] as String,
         TaskPriority: maps[index]["TaskPriority"] as int,
@@ -47,7 +47,7 @@ TaskPriority INTEGER
     });
   }
 
-  Future<void> updateTask(Databasemodael Task) async {
+  Future<void> updateTask(TaskModel Task) async {
     final db = await database;
     await db.update(
       'Uptodotasks',
@@ -57,7 +57,7 @@ TaskPriority INTEGER
     );
   }
 
-  Future<void> DeleteTask(Databasemodael Task) async {
+  Future<void> DeleteTask(TaskModel Task) async {
     final db = await database;
     await db.delete(
       'Uptodotasks',
