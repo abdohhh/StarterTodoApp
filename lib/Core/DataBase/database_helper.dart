@@ -42,7 +42,8 @@ TaskPriority INTEGER
       return TaskModel(
         Tasktitle: maps[index]["Tasktitle"] as String,
         Description: maps[index]["Description"] as String,
-        TaskPriority: maps[index]["TaskPriority"] as int,
+        TaskAlarm: DateTime.parse(maps[index]["TaskAlarm"] as String),
+        // TaskPriority: maps[index]["TaskPriority"] as int,
       );
     });
   }
@@ -52,18 +53,14 @@ TaskPriority INTEGER
     await db.update(
       'Uptodotasks',
       Task.toMap(),
-      where: 'id = ?',  
+      where: 'id = ?',
       whereArgs: [Task.id],
     );
   }
 
   Future<void> DeleteTask(TaskModel Task) async {
     final db = await database;
-    await db.delete(
-      'Uptodotasks',
-      where: 'id = ?',
-      whereArgs: [Task.id],
-    );
+    await db.delete('Uptodotasks', where: 'id = ?', whereArgs: [Task.id]);
   }
 
   Future<void> initDb() async {}

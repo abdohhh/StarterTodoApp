@@ -2,16 +2,15 @@ class TaskModel {
   final int? id;
   final String Tasktitle;
   final String Description;
-  final int TaskPriority;
-  //  final DateTime TaskAlarm;
-  // bool isCompleted;/
+  final DateTime? TaskAlarm;
+  bool? isCompleted;
 
   TaskModel({
     required this.Tasktitle,
     required this.Description,
-    required this.TaskPriority,
     this.id,
-    // required this.isCompleted,
+    this.isCompleted, 
+    required this.TaskAlarm,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,8 +18,8 @@ class TaskModel {
       'id': id,
       'Tasktitle': Tasktitle,
       'Description': Description,
-      'TaskPriority': TaskPriority,
-      // 'TaskAlarm': TaskAlarm.toIso8601String(),
+      'TaskAlarm': TaskAlarm,
+      // 'TaskPriority': TaskPriority,
       // 'isCompleted': isCompleted ? 1 : 0,
     };
   }
@@ -31,28 +30,28 @@ List<TaskModel> testdata = [
     id: 1,
     Tasktitle: "Task 1",
     Description: "Description for Task 1",
-    TaskPriority: 1,
-    // isCompleted: false,
+    TaskAlarm: DateTime.now(),
+    isCompleted: false,
   ),
   TaskModel(
     id: 2,
     Tasktitle: "Task 2",
     Description: "Description for Task 2",
-    TaskPriority: 2,
-    // isCompleted: true,
+    TaskAlarm: DateTime.now(),
+    isCompleted: true,
   ),
   TaskModel(
     id: 3,
     Tasktitle: "Task 3",
     Description: "Description for Task 3",
-    TaskPriority: 3,
-    // isCompleted: false,
+    TaskAlarm: DateTime.now(),
+    isCompleted: false,
   ),
   TaskModel(
     id: 4,
     Tasktitle: "Task 4",
     Description: "Description for Task 4",
-    TaskPriority: 4,
-    // isCompleted: true,
+    TaskAlarm: DateTime.now(),
+    isCompleted: true,
   ),
 ];

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todotasks/core/Routes/app_routes.dart';
 import 'package:todotasks/core/assets/app_icons.dart';
+import 'package:todotasks/models/task_model.dart';
 
 class Tasklistscreen extends StatefulWidget {
   const Tasklistscreen({super.key});
@@ -13,6 +15,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
   int activeindex = 0;
   List<String> filter = ['All Tasks', 'Work', 'Personal', 'Shopping', 'Others'];
   int BottomcurrentIndex = 0;
+  // bool value = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +46,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
               ).textTheme.displayLarge?.copyWith(fontSize: 18),
             ),
             Text(
-              'Here are your 5 tasks for today',
+              'Here are your ${testdata.length} tasks for today',
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(fontSize: 12),
@@ -87,35 +90,58 @@ class _TasklistscreenState extends State<Tasklistscreen> {
                         activeindex = index;
                       });
                     },
-                    child: Container(
-                      // width: 200,
-                      margin: EdgeInsets.only(right: 16),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: index == activeindex
-                            ? Color(0x4A22D3EE)
-                            : Color(0xff1A1A1A),
-                        border: Border.all(
-                          color: index == activeindex
-                              ? Color(0xFF22D3EE)
-                              : Colors.transparent,
-                          width: 2,
+                    child: FilterBar(index, context),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            Flexible(
+              child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+                itemCount: testdata.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Color(0xff1A1A1A),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: testdata[index].isCompleted,
+                          onChanged: (bool? newValue) {
+                            setState(() {
+                              testdata[index].isCompleted = newValue ?? false;
+                            });
+                          },
                         ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          filter[index],
-                          style: index == activeindex
-                              ? Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: Color(0xFF22D3EE))
-                              : Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: Colors.white),
+                        SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              testdata[index].Tasktitle,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
+                              testdata[index].Description,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            Text(
+                              testdata[index].TaskAlarm != null
+                                  ? DateFormat.yMMMEd().format(
+                                      testdata[index].TaskAlarm!,
+                                    )
+                                  : 'No Alarm',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                      ),
+                        SizedBox(width: 16),
+                      ],
                     ),
                   );
                 },
@@ -126,7 +152,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Handle add task button press
+          Navigator.pushNamed(context, Approutes.TaskDetailsScreen);
         },
         child: Icon(Icons.add),
       ),
@@ -156,6 +182,34 @@ class _TasklistscreenState extends State<Tasklistscreen> {
             activeIcon: Icon(Icons.person),
           ),
         ],
+      ),
+    );
+  }
+
+  Container FilterBar(int index, BuildContext context) {
+    return Container(
+      // width: 200,
+      margin: EdgeInsets.only(right: 16),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      decoration: BoxDecoration(
+        color: index == activeindex ? Color(0x4A22D3EE) : Color(0xff1A1A1A),
+        border: Border.all(
+          color: index == activeindex ? Color(0xFF22D3EE) : Colors.transparent,
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Text(
+          filter[index],
+          style: index == activeindex
+              ? Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Color(0xFF22D3EE))
+              : Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.white),
+        ),
       ),
     );
   }
