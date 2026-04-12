@@ -1,5 +1,8 @@
+import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:msh_checkbox/msh_checkbox.dart';
+import 'package:todotasks/core/DataBase/database_helper.dart';
 import 'package:todotasks/core/Routes/app_routes.dart';
 import 'package:todotasks/core/assets/app_icons.dart';
 import 'package:todotasks/models/task_model.dart';
@@ -15,7 +18,26 @@ class _TasklistscreenState extends State<Tasklistscreen> {
   int activeindex = 0;
   List<String> filter = ['All Tasks', 'Work', 'Personal', 'Shopping', 'Others'];
   int BottomcurrentIndex = 0;
-  // bool value = false;
+  List<TaskModel> tasks = [];
+  final NotchBottomBarController _notchController = NotchBottomBarController(
+    index: 0,
+  );
+  @override
+  void initState() {
+    super.initState();
+    refresh();
+  }
+
+  loadData() async {
+    var loadedTasks = await TasksDataBase().getTasks;
+    tasks = loadedTasks.map((e) => TaskModel.fromMap(e)).toList();
+  }
+
+  refresh() async {
+    await loadData();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +48,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
             CircleAvatar(
               radius: 20,
               backgroundColor: Colors.white,
-              child: Image.asset(
-                AppIcons.home,
-                width: 35,
-                height: 35,
-                alignment: Alignment.center,
-                fit: BoxFit.none,
-              ),
+              backgroundImage: AssetImage(AppIcons.home),
             ),
           ],
         ),
@@ -46,7 +62,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
               ).textTheme.displayLarge?.copyWith(fontSize: 18),
             ),
             Text(
-              'Here are your ${testdata.length} tasks for today',
+              'Here are your ${tasks.length} tasks for today',
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(fontSize: 12),
@@ -99,7 +115,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
             Flexible(
               child: ListView.builder(
                 physics: BouncingScrollPhysics(),
-                itemCount: testdata.length,
+                itemCount: tasks.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
                     margin: EdgeInsets.only(bottom: 16),
@@ -110,37 +126,60 @@ class _TasklistscreenState extends State<Tasklistscreen> {
                     ),
                     child: Row(
                       children: [
-                        Checkbox(
-                          value: testdata[index].isCompleted,
+                        //* MSHCheckbox
+                        MSHCheckbox(
+                          checkedColor: Color(0xFF22D3EE),
+                          size: 24,
+                          style: MSHCheckboxStyle.fillScaleCheck,
+                          value: tasks[index].isCompleted!,
                           onChanged: (bool? newValue) {
                             setState(() {
-                              testdata[index].isCompleted = newValue ?? false;
+                              tasks[index].isCompleted = newValue ?? false;
+
+                              TasksDataBase().updateTask(
+                                tasks[index].id!,
+                                tasks[index],
+                              );
                             });
                           },
                         ),
                         SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              testdata[index].Tasktitle,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            Text(
-                              testdata[index].Description,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            Text(
-                              testdata[index].TaskAlarm != null
-                                  ? DateFormat.yMMMEd().format(
-                                      testdata[index].TaskAlarm!,
-                                    )
-                                  : 'No Alarm',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                tasks[index].Tasktitle,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium!.copyWith(fontSize: 24),
+                              ),
+                              Text(
+                                tasks[index].Description,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall!.copyWith(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              // Text(
+                              //   tasks[index].TaskAlarm != null
+                              //       ? DateFormat.yMMMEd().format(
+                              //           tasks[index].TaskAlarm!,
+                              //         )
+                              //       : 'No Alarm',
+                              //   style: Theme.of(context).textTheme.bodySmall,
+                              // ),
+                            ],
+                          ),
                         ),
-                        SizedBox(width: 16),
+                        // Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            await TasksDataBase().deleteTask(tasks[index].id!);
+                            refresh();
+                          },
+                          icon: Icon(Icons.delete_outline, color: Colors.white),
+                        ),
                       ],
                     ),
                   );
@@ -151,37 +190,61 @@ class _TasklistscreenState extends State<Tasklistscreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Approutes.TaskDetailsScreen);
+        onPressed: () async {
+          await Navigator.pushNamed(context, Approutes.TaskDetailsScreen);
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return AlertDialog(
+          //       alignment: Alignment.bottomCenter,
+          //       title: Text('Add New Task'),
+          //       content: Text("data"),
+          //     );
+          //   },
+          // );
+          refresh();
         },
         child: Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: BottomcurrentIndex,
+      bottomNavigationBar: AnimatedNotchBottomBar(
+        kIconSize: 24,
+        kBottomRadius: 12,
+        removeMargins: false,
+        bottomBarWidth: 500,
+        showShadow: false,
+        durationInMilliSeconds: 300,
+        shadowElevation: 5,
+        elevation: 1,
+        notchBottomBarController: _notchController,
+        color: Color(0xff1A1A1A),
+        showLabel: true,
+        notchColor: Color(0xFF22D3EE),
+        bottomBarItems: [
+          BottomBarItem(
+            inActiveItem: Icon(Icons.home_outlined, color: Colors.white),
+            activeItem: Icon(Icons.home_filled, color: Colors.white),
+            itemLabel: 'Home',
+          ),
+          BottomBarItem(
+            inActiveItem: Icon(
+              Icons.calendar_today_outlined,
+              color: Colors.white,
+            ),
+            activeItem: Icon(Icons.calendar_today, color: Colors.white),
+            itemLabel: 'Calendar',
+          ),
+          BottomBarItem(
+            inActiveItem: Icon(Icons.person_outline, color: Colors.white),
+            activeItem: Icon(Icons.person, color: Colors.white),
+            itemLabel: 'Profile',
+          ),
+        ],
         onTap: (index) {
           setState(() {
             BottomcurrentIndex = index;
+            _notchController.index = index;
           });
         },
-        selectedItemColor: Color(0xFF22D3EE),
-        unselectedItemColor: Colors.white,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            activeIcon: Icon(Icons.home_filled),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
-            activeIcon: Icon(Icons.calendar_today),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-            activeIcon: Icon(Icons.person),
-          ),
-        ],
       ),
     );
   }

@@ -1,11 +1,13 @@
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:todotasks/Models/task_model.dart';
+import 'package:todotasks/models/task_model.dart';
+
 
 class TasksDataBase {
   static Database? _database;
-  static final TasksDataBase instanse = TasksDataBase._();
-  TasksDataBase._();
+  // static final TasksDataBase instance = TasksDataBase._();
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
@@ -23,45 +25,48 @@ create Table Uptodotasks(
 id INTEGER PRIMARY KEY autoincrement,
 Tasktitle TEXT NOT NULL,
 Description TEXT NOT NULL,
-TaskPriority INTEGER 
+isCompleted INTEGER NOT NULL DEFAULT 0 
 )
 ''');
       },
     );
   }
 
-  Future<void> insertTask(TaskModel Task) async {
+  Future<void> insertTask(TaskModel task) async {
     final db = await database;
-    await db.insert("Uptodotasks", Task.toMap());
+    await db.insert("Uptodotasks", task.toMap(task));
+    print("Task inserted successfully");
   }
 
-  Future<List<TaskModel>> Tasks() async {
+  Future<List<Map<String, dynamic>>> get getTasks async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('Uptodotasks');
-    return List.generate(maps.length, (index) {
-      return TaskModel(
-        Tasktitle: maps[index]["Tasktitle"] as String,
-        Description: maps[index]["Description"] as String,
-        TaskAlarm: DateTime.parse(maps[index]["TaskAlarm"] as String),
-        // TaskPriority: maps[index]["TaskPriority"] as int,
-      );
-    });
+    return maps;
   }
 
-  Future<void> updateTask(TaskModel Task) async {
+  Future<void> updateTask(int taskId , TaskModel task ) async {
     final db = await database;
     await db.update(
       'Uptodotasks',
-      Task.toMap(),
+      task.toMap(task),
       where: 'id = ?',
-      whereArgs: [Task.id],
+      whereArgs: [taskId],
     );
   }
 
-  Future<void> DeleteTask(TaskModel Task) async {
+  Future<void> deleteTask(int taskId) async {
     final db = await database;
-    await db.delete('Uptodotasks', where: 'id = ?', whereArgs: [Task.id]);
+    await db.delete('Uptodotasks', where: 'id = ?', whereArgs: [taskId]);
+      }
+
+
+
+  Future<void> get deleteallTak async {
+    final db = await database;
+    await db.delete('Uptodotasks');
   }
 
   Future<void> initDb() async {}
+
+
 }
