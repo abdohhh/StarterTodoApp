@@ -1,4 +1,4 @@
 class Approutes {
   static const String home = '/TaskListScreen';
-  static const String TaskDetailsScreen = '/TaskDetailsScreen';
+  static const String AddTasks = '/AddTasks';
 }

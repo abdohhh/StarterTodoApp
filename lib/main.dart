@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todotasks/Models/task_model.dart';
-import 'package:todotasks/Screens/TaskDetailsScreen.dart';
+
 import 'package:todotasks/Screens/TaskListScreen.dart';
 import 'package:todotasks/core/DataBase/database_helper.dart';
 import 'package:todotasks/core/Routes/app_routes.dart';
 import 'package:todotasks/core/theme/app_themes.dart';
+import 'package:todotasks/screens/add_tasks.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       routes: {
         Approutes.home: (context) => const Tasklistscreen(),
-        Approutes.TaskDetailsScreen: (context) => const Taskdetailsscreen(),
+        Approutes.AddTasks: (context) => const AddTasks(),
       },
       initialRoute: Approutes.home,
     );

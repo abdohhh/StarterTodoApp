@@ -18,14 +18,16 @@ class TasksDataBase {
     String path = join(await getDatabasesPath(), "Uptodo.db");
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
 create Table Uptodotasks(
 id INTEGER PRIMARY KEY autoincrement,
 Tasktitle TEXT NOT NULL,
 Description TEXT NOT NULL,
-isCompleted INTEGER NOT NULL DEFAULT 0 
+isCompleted INTEGER NOT NULL DEFAULT 0,
+priority TEXT NOT NULL DEFAULT 'Low',
+TaskAlarm TEXT NOT NULL 
 )
 ''');
       },

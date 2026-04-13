@@ -19,6 +19,8 @@ class _TasklistscreenState extends State<Tasklistscreen> {
   List<String> filter = ['All Tasks', 'Work', 'Personal', 'Shopping', 'Others'];
   int BottomcurrentIndex = 0;
   List<TaskModel> tasks = [];
+  TextEditingController TasktitleController = TextEditingController();
+  TextEditingController DescriptionController = TextEditingController();
   final NotchBottomBarController _notchController = NotchBottomBarController(
     index: 0,
   );
@@ -150,25 +152,71 @@ class _TasklistscreenState extends State<Tasklistscreen> {
                             children: [
                               Text(
                                 tasks[index].Tasktitle,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium!.copyWith(fontSize: 24),
+                                style: tasks[index].isCompleted!
+                                    ? Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium!.copyWith(
+                                        fontSize: 24,
+                                        decoration: TextDecoration.lineThrough,
+                                      )
+                                    : Theme.of(context).textTheme.bodyMedium!
+                                          .copyWith(fontSize: 24),
                               ),
                               Text(
                                 tasks[index].Description,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall!.copyWith(fontSize: 18),
+                                style: tasks[index].isCompleted!
+                                    ? Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium!.copyWith(
+                                        fontSize: 18,
+                                        decoration: TextDecoration.lineThrough,
+                                      )
+                                    : Theme.of(context).textTheme.bodySmall!
+                                          .copyWith(fontSize: 18),
+
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              // Text(
-                              //   tasks[index].TaskAlarm != null
-                              //       ? DateFormat.yMMMEd().format(
-                              //           tasks[index].TaskAlarm!,
-                              //         )
-                              //       : 'No Alarm',
-                              //   style: Theme.of(context).textTheme.bodySmall,
-                              // ),
+
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFF22D3EE),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      tasks[index].priority ?? 'No Priority',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFF22D3EE),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      DateFormat.yMMMEd().format(
+                                        tasks[index].TaskAlarm,
+                                      ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -191,17 +239,7 @@ class _TasklistscreenState extends State<Tasklistscreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, Approutes.TaskDetailsScreen);
-          // showDialog(
-          //   context: context,
-          //   builder: (context) {
-          //     return AlertDialog(
-          //       alignment: Alignment.bottomCenter,
-          //       title: Text('Add New Task'),
-          //       content: Text("data"),
-          //     );
-          //   },
-          // );
+          await Navigator.pushNamed(context, Approutes.AddTasks);
           refresh();
         },
         child: Icon(Icons.add),
